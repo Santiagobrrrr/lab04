@@ -1,19 +1,91 @@
 import tkinter as tk
-from tkinter import messagebox
+
+class Participante:
+    def __init__(self, nombre, institucion):
+        super().__init__()
+        self.nombre = nombre
+        self.institucion = institucion
+
+    def mostrar_info(self):
+        pass
+
+class BandaEscolar(Participante):
+
+    def __init__(self, nombre, institucion, categoria, total, promedio):
+        super().__init__(nombre, institucion)
+        self._categoria = categoria
+        self._puntajes = {}
+        self.categorias = ["primaria","básico","diversificado"]
+        self.criterios = ["ritmo", "uniformidad", "coreografía", "alineación", "puntualidad"]
+        self.__total = total
+        self.__promedio = promedio
+
+    def set_categoria(self, categoria):
+        if categoria not in self.categorias:
+            raise ValueError(f"La categoria {categoria} no existe")
+        self._categoria = categoria
+
+    def registrar_puntajes(self, puntajes):
+        puntajes_completos = {}
+        for crit in self.criterios:
+            puntajes_completos[crit] = 0
+
+        for crit, val in puntajes.items():
+            if crit not in self.criterios:
+                raise ValueError(f"Criterio no válido: {crit}")
+            if not (0 <= val <= 10):
+                raise ValueError(f"Puntaje inválido en {crit}: {val}")
+            puntajes_completos[crit] = val
+
+        self._puntajes = puntajes_completos
+
+    @property
+    def total(self):
+        return self.__total
+
+    @total.setter
+    def total(self, total_a):
+        sum(self._puntajes.values())
+        self.__total = total_a
+
+    @property
+    def promedio(self):
+        return self.__promedio
+
+    @promedio.setter
+    def promedio(self, promedio_a):
+        sum(self._puntajes.values())/len(self._puntajes)
+        self.__promedio = promedio_a
+
+    def mostrar_info(self):
+        return f"{self.nombre} | {self.institucion} - Categoria: {self.categoria} - Puntaje: {self.puntajes}"
 
 def inscribir_banda():
-    messagebox.showinfo("Inscripción", "Aquí se inscribiría una banda")
+    print("Se abrió la ventana: Inscribir Banda")
+    ventana_inscribir = tk.Toplevel(ventana)
+    ventana_inscribir.title("Inscribir Banda")
+    ventana_inscribir.geometry("400x300")
 
 def registrar_evaluacion():
-    messagebox.showinfo("Evaluación", "Aquí se registrarían los puntajes")
+    print("Se abrió la ventana: Registrar Evaluación")
+    ventana_eval = tk.Toplevel(ventana)
+    ventana_eval.title("Registrar Evaluación")
+    ventana_eval.geometry("400x300")
 
 def listar_bandas():
-    messagebox.showinfo("Listado", "Aquí se mostraría el listado de bandas")
+    print("Se abrió la ventana: Listado de Bandas")
+    ventana_listado = tk.Toplevel(ventana)
+    ventana_listado.title("Listado de Bandas")
+    ventana_listado.geometry("400x300")
 
 def ver_ranking():
-    messagebox.showinfo("Ranking", "Aquí se mostraría el ranking final")
+    print("Se abrió la ventana: Ranking Final")
+    ventana_ranking = tk.Toplevel(ventana)
+    ventana_ranking.title("Ranking Final")
+    ventana_ranking.geometry("400x300")
 
 def salir():
+    print("Aplicación cerrada")
     ventana.quit()
 
 ventana = tk.Tk()
