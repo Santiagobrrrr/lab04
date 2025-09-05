@@ -41,21 +41,11 @@ class BandaEscolar(Participante):
 
     @property
     def total(self):
-        return self.__total
-
-    @total.setter
-    def total(self, total_a):
-        sum(self._puntajes.values())
-        self.__total = total_a
+        return sum(self._puntajes.values())
 
     @property
     def promedio(self):
-        return self.__promedio
-
-    @promedio.setter
-    def promedio(self, promedio_a):
-        sum(self._puntajes.values())/len(self._puntajes)
-        self.__promedio = promedio_a
+        return self.total / len(self._puntajes)
 
     def mostrar_info(self):
         return f"{self.nombre} | {self.institucion} - Categoria: {self.categoria} - Puntaje: {self.puntajes}"
@@ -90,7 +80,7 @@ def salir():
 
 ventana = tk.Tk()
 ventana.title("Concurso de Bandas - Quetzaltenango")
-ventana.geometry("500x300")
+ventana.geometry("500x150")
 
 barra_menu = tk.Menu(ventana)
 
