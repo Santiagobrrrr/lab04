@@ -1,28 +1,45 @@
-class Participante:
-    def __init__(self, nombre, institucion):
-        super().__init__()
-        self.nombre = nombre
-        self.institucion = institucion
+import tkinter as tk
+from tkinter import messagebox
 
-    def mostrar_info(self):
-        pass
+def inscribir_banda():
+    messagebox.showinfo("Inscripción", "Aquí se inscribiría una banda")
 
+def registrar_evaluacion():
+    messagebox.showinfo("Evaluación", "Aquí se registrarían los puntajes")
 
-class BandaEscolar(Participante):
-    def __init__(self, nombre, institucion, categoria, puntajes):
-        super().__init__(nombre, institucion)
-        self._categoria = categoria
-        self._puntajes = puntajes
+def listar_bandas():
+    messagebox.showinfo("Listado", "Aquí se mostraría el listado de bandas")
 
-    def set_categoria(self, categoria):
-        if self._categoria == "primaria":
-            self._categoria = categoria
+def ver_ranking():
+    messagebox.showinfo("Ranking", "Aquí se mostraría el ranking final")
 
-        elif self._categoria == "básico":
-            self._categoria = categoria
+def salir():
+    ventana.quit()
 
-        elif self._categoria == "diversificado":
-            self._categoria = categoria
+ventana = tk.Tk()
+ventana.title("Concurso de Bandas - Quetzaltenango")
+ventana.geometry("500x300")
 
-        else:
-            print("Categoria incorrecta")
+barra_menu = tk.Menu(ventana)
+
+menu_opciones = tk.Menu(barra_menu, tearoff=0)
+menu_opciones.add_command(label="Inscribir Banda", command=inscribir_banda)
+menu_opciones.add_command(label="Registrar Evaluación", command=registrar_evaluacion)
+menu_opciones.add_command(label="Listar Bandas", command=listar_bandas)
+menu_opciones.add_command(label="Ver Ranking", command=ver_ranking)
+menu_opciones.add_separator()
+menu_opciones.add_command(label="Salir", command=salir)
+
+barra_menu.add_cascade(label="Opciones", menu=menu_opciones)
+
+ventana.config(menu=barra_menu)
+
+etiqueta = tk.Label(
+    ventana,
+    text="Sistema de Inscripción y Evaluación de Bandas Escolares\nDesfile 15 de Septiembre - Quetzaltenango",
+    font=("Arial", 12, "bold"),
+    justify="center"
+)
+etiqueta.pack(pady=50)
+
+ventana.mainloop()
