@@ -87,7 +87,7 @@ class ConcursoBandasApp:
     def __init__(self):
         self.ventana = tk.Tk()
         self.ventana.title("Concurso de Bandas - Quetzaltenango")
-        self.ventana.geometry("500x150")
+        self.ventana.geometry("600x400")
 
         self.menu()
 
@@ -113,21 +113,91 @@ class ConcursoBandasApp:
         self.ventana.config(menu=barra)
 
     def inscribir_banda(self):
-        print("Se abrió la ventana: Inscribir Banda")
-        tk.Toplevel(self.ventana).title("Inscribir Banda")
+        ventana = tk.Toplevel(self.ventana)
+        ventana.title("Inscribir Banda")
+        tk.Label(ventana, text="Nombre:").grid(row=0, column=0, padx=6, pady=6, sticky="w")
+        entry_nombre = tk.Entry(ventana)
+        entry_nombre.grid(row=0, column=1, padx=6, pady=6)
+
+        tk.Label(ventana, text="Institución:").grid(row=1, column=0, padx=6, pady=6, sticky="w")
+        entry_institucion = tk.Entry(ventana)
+        entry_institucion.grid(row=1, column=1, padx=6, pady=6)
+
+        tk.Label(ventana, text="Categoría:").grid(row=2, column=0, padx=6, pady=6, sticky="w")
+        combo_categoria = tk.ttk.Combobox(ventana, values=["primaria", "básico", "diversificado"], state="readonly")
+        combo_categoria.grid(row=2, column=1, padx=6, pady=6)
+        combo_categoria.set("primaria")
+
+        def guardar():
+            try:
+                nombre = entry_nombre.get().strip()
+                institucion = entry_institucion.get().strip()
+                categoria = combo_categoria.get().lower()
+                if not nombre or not institucion:
+                    raise ValueError("Nombre e institución son obligatorios.")
+                banda = BandaEscolar(nombre, institucion, categoria)
+                self.concurso.inscribir_banda(banda)
+                tk.messagebox.showinfo("Éxito", f"Banda '{nombre}' inscrita correctamente")
+                ventana.destroy()
+            except Exception as e:
+                tk.messagebox.showerror("Error", str(e))
+
+        tk.Button(ventana, text="Guardar", command=guardar).grid(row=3, column=0, columnspan=2, pady=10)
 
     def registrar_evaluacion(self):
-        print("Se abrió la ventana: Registrar Evaluación")
-        tk.Toplevel(self.ventana).title("Registrar Evaluación")
+        if not self.concurso.bandas:
+            tk.messagebox.showinfo("Aviso", "Aún no hay bandas inscritas.")
+            return
+
+        ventana = tk.Toplevel(self.ventana)
+        ventana.title("Registrar Evaluación")
+
+        tk.Label(ventana, text="Seleccione Banda:").grid(row=0, column=0, padx=6, pady=6, sticky="w")
+        combo_banda = tk.ttk.Combobox(ventana, values=list(self.concurso.bandas.keys()), state="readonly")
+        combo_banda.grid(row=0, column=1, padx=6, pady=6)
+        combo_banda.set(list(self.concurso.bandas.keys())[0])
+
+        entries = {}
+        criterios = ["ritmo", "uniformidad", "coreografía", "alineación", "puntualidad"]
+        for i, crit in enumerate(criterios, start=1):
+            tk.Label(ventana, text=f"{crit.capitalize()} (0-10):").grid(row=i, column=0, padx=6, pady=4, sticky="w")
+            entry = tk.Spinbox(ventana, from_=0, to=10, width=5)
+            entry.delete(0, "end")
+            entry.insert(0, "0")
+            entry.grid(row=i, column=1, padx=6, pady=4)
+            entries[crit] = entry
+
+        def guardar():
+            try:
+                banda = combo_banda.get()
+                puntajes = {crit: int(entry.get()) for crit, entry in entries.items()}
+                self.concurso.registrar_evaluacion(banda, puntajes)
+                tk.messagebox.showinfo("Éxito", f"Evaluación registrada para {banda}")
+                ventana.destroy()
+            except Exception as e:
+                tk.messagebox.showerror("Error", str(e))
+
+        tk.Button(ventana, text="Guardar Evaluación", command=guardar).grid(row=len(criterios) + 1, column=0,
+                                                                            columnspan=2, pady=10)
 
     def listar_bandas(self):
-        print("Se abrió la ventana: Listado de Bandas")
-        tk.Toplevel(self.ventana).title("Listado de Bandas")
+        ventana = tk.Toplevel(self.ventana)
+        ventana.title("Listado de Bandas")
+
+        tree = tk.Treeview(ventana, columns=("Nombre", "Institución", "Categoría", "Total", "Promedio"),
+                            show="headings")
+        for col in ("Nombre", "Institución", "Categoría", "Total", "Promedio"):
+            tree.heading(col, text=col)
+            tree.column(col, width=120, anchor="center")
+        tree.pack(fill="both", expand=True)
+
+        for banda in self.concurso.bandas.values():
+            tree.insert("", "end", values=(banda.nombre, banda.institucion, banda.categoria, banda.total,
+                                           round(banda.promedio, 2)))
 
     def ver_ranking(self):
         print("Se abrió la ventana: Ranking Final")
         tk.Toplevel(self.ventana).title("Ranking Final")
-
 
 if __name__ == "__main__":
     ConcursoBandasApp()
