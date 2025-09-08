@@ -204,8 +204,23 @@ class ConcursoBandasApp:
                                            round(banda.promedio, 2)))
 
     def ver_ranking(self):
-        print("Se abrió la ventana: Ranking Final")
-        tk.Toplevel(self.ventana).title("Ranking Final")
+        if not self.concurso.bandas:
+            tk.messagebox.showinfo("Aviso", "No hay bandas inscritas.")
+            return
+
+        ventana = tk.Toplevel(self.ventana)
+        ventana.title("Ranking")
+
+        tree = ttk.Treeview(ventana, columns=("Posición", "Nombre", "Institución", "Categoría", "Total", "Promedio"),show="headings")
+
+        for col in ("Posición", "Nombre", "Institución", "Categoría", "Total", "Promedio"):
+            tree.heading(col, text=col)
+            tree.column(col, width=100, anchor="center")
+        tree.pack(fill="both", expand=True)
+
+        ranking = self.concurso.ranking()
+        for i, banda in enumerate(ranking, start=1):
+            tree.insert("","end",values=(i, banda.nombre, banda.institucion, banda.categoria, banda.total, round(banda.promedio, 2)))
 
 if __name__ == "__main__":
     ConcursoBandasApp()
