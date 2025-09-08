@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk, messagebox
 
 class Participante:
     def __init__(self, nombre, institucion):
@@ -11,14 +12,20 @@ class Participante:
 
 class BandaEscolar(Participante):
 
-    def __init__(self, nombre, institucion, categoria, total, promedio):
+    def __init__(self, nombre, institucion, categoria):
         super().__init__(nombre, institucion)
         self._categoria = categoria
         self._puntajes = {}
         self.categorias = ["primaria","básico","diversificado"]
         self.criterios = ["ritmo", "uniformidad", "coreografía", "alineación", "puntualidad"]
-        self.__total = total
-        self.__promedio = promedio
+
+    @property
+    def categoria(self):
+        return self._categoria
+
+    @property
+    def puntajes(self):
+        return self._puntajes
 
     def set_categoria(self, categoria):
         if categoria not in self.categorias:
@@ -85,9 +92,10 @@ class Concurso:
 
 class ConcursoBandasApp:
     def __init__(self):
+        self.concurso = Concurso("Concurso de Bandas", "14/09/2025")
         self.ventana = tk.Tk()
         self.ventana.title("Concurso de Bandas - Quetzaltenango")
-        self.ventana.geometry("600x400")
+        self.ventana.geometry("600x150")
 
         self.menu()
 
@@ -124,7 +132,7 @@ class ConcursoBandasApp:
         entry_institucion.grid(row=1, column=1, padx=6, pady=6)
 
         tk.Label(ventana, text="Categoría:").grid(row=2, column=0, padx=6, pady=6, sticky="w")
-        combo_categoria = tk.ttk.Combobox(ventana, values=["primaria", "básico", "diversificado"], state="readonly")
+        combo_categoria = ttk.Combobox(ventana, values=["primaria", "básico", "diversificado"], state="readonly")
         combo_categoria.grid(row=2, column=1, padx=6, pady=6)
         combo_categoria.set("primaria")
 
@@ -153,7 +161,7 @@ class ConcursoBandasApp:
         ventana.title("Registrar Evaluación")
 
         tk.Label(ventana, text="Seleccione Banda:").grid(row=0, column=0, padx=6, pady=6, sticky="w")
-        combo_banda = tk.ttk.Combobox(ventana, values=list(self.concurso.bandas.keys()), state="readonly")
+        combo_banda = ttk.Combobox(ventana, values=list(self.concurso.bandas.keys()), state="readonly")
         combo_banda.grid(row=0, column=1, padx=6, pady=6)
         combo_banda.set(list(self.concurso.bandas.keys())[0])
 
@@ -184,7 +192,7 @@ class ConcursoBandasApp:
         ventana = tk.Toplevel(self.ventana)
         ventana.title("Listado de Bandas")
 
-        tree = tk.Treeview(ventana, columns=("Nombre", "Institución", "Categoría", "Total", "Promedio"),
+        tree = ttk.Treeview(ventana, columns=("Nombre", "Institución", "Categoría", "Total", "Promedio"),
                             show="headings")
         for col in ("Nombre", "Institución", "Categoría", "Total", "Promedio"):
             tree.heading(col, text=col)
