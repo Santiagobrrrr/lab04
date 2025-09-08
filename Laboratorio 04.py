@@ -50,6 +50,39 @@ class BandaEscolar(Participante):
     def mostrar_info(self):
         return f"{self.nombre} | {self.institucion} - Categoria: {self.categoria} - Puntaje: {self.puntajes}"
 
+class Concurso:
+    def __init__(self, nombre, fecha):
+        self.nombre = nombre
+        self.fecha = fecha
+        self.bandas = {}
+
+    def inscribir_banda(self, banda: BandaEscolar):
+        if banda.nombre in self.bandas:
+            raise ValueError(f"La banda {banda.nombre} ya está inscrita")
+        self.bandas[banda.nombre] = banda
+
+    def registrar_evaluacion(self, nombre_banda, puntajes):
+        if nombre_banda not in self.bandas:
+            raise ValueError(f"La banda {nombre_banda} no está inscrita")
+        self.bandas[nombre_banda].registrar_puntajes(puntajes)
+
+    def listar_bandas(self):
+        return [banda.mostrar_info() for banda in self.bandas.values()]
+
+    def ranking(self):
+        return sorted(
+            self.bandas.values(),
+            key=lambda b: (
+                -b.total,
+                -b.puntajes.get("ritmo", 0),
+                -b.puntajes.get("uniformidad", 0),
+                -b.puntajes.get("coreografía", 0),
+                -b.puntajes.get("alineación", 0),
+                -b.puntajes.get("puntualidad", 0),
+                b.nombre
+            )
+        )
+
 class ConcursoBandasApp:
     def __init__(self):
         self.ventana = tk.Tk()
